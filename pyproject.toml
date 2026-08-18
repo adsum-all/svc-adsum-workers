@@ -1,0 +1,35 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "adsum-ouvriers"
+version = "0.1.0"
+description = "L ordonnanceur ADSUM : fait avancer les files en continu"
+requires-python = ">=3.11"
+# Les bornes hautes ne sont pas decoratives. Sans elles, l hebergeur installe la
+# version la plus recente a chaque construction : le service deploye n est alors pas
+# celui qui a ete teste, et une regression amont devient une panne de production sans
+# qu une seule ligne de ce depot ait change.
+#
+# Le plancher est la version eprouvee le 13 aout 2026, le plafond la majeure
+# suivante. Epingler au patch obligerait a toucher ces fichiers a chaque correctif de
+# securite amont, ce que personne ne fait : la borne finirait retiree, et on serait
+# revenu au point de depart.
+dependencies = [
+    "httpx>=0.28,<1.0",
+]
+
+[project.scripts]
+adsum-ouvriers = "ouvriers.main:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ouvriers"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
